@@ -1,4 +1,8 @@
-const fs = require('fs');
+
+/**
+ * poner todos los nombres en un mismo idioma, o ingles o español!!
+ */
+const fs = require('fs'); //conviene tener los require al principio
 
 main();
 
