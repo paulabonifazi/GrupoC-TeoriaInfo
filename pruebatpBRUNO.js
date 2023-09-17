@@ -1,49 +1,47 @@
-const { isNull } = require('util');
-
 main();
 
 function main(){
     var setpar=new Map;
-    const fs = require('fs');
-    var contenido=fs.readFileSync('tp2_sample2.txt','ASCII');
-    var palabras=contenido.split(' ');
-    let suma=0;
-    for (let i=0;i<palabras.length;i++){
-        suma++;
-        if (setpar.has(palabras[i])){
-            const aux=setpar.get(palabras[i])+1;
-            setpar.set(palabras[i],aux);
-        }else
-            setpar.set(palabras[i],1); 
-    }
-    let letra;
     let vec=[];
-        
-    setpar.forEach((valor, clave) => {
-        console.log(clave,":" ,valor," prob:", valor/suma);
-        for (let i = 0; i < clave.length; i++) {
-            letra = clave[i];
-            if (!vec.includes(letra))
-            vec.push(letra);
-        }
-    }); 
-    console.log(vec);
-    console.log('entropia:',enthropy(suma,vec,setpar));
-    console.log('longitud media:',longitudMedia(suma,setpar));
-    console.log('valor de kraft:',ecuacionKraft(vec,setpar));
-    console.log("es compacto: ",iscompacto(suma,vec,setpar));
-    if (ecuacionKraft(vec,setpar)<=1)
-        console.log("es instantaneo: ",isinstantaneo(setpar));
+    if (lectura_arch(setpar,vec)){//lo que hago es guardar el diccionario y la cantidad de apariciones
+        var suma=sumar(setpar);
+        console.log('entropia:',enthropy(suma,vec,setpar));
+        console.log('longitud media:',longitudMedia(suma,setpar));
+        console.log('valor de kraft:',ecuacionKraft(vec,setpar));
+        console.log("es compacto: ",iscompacto(suma,vec,setpar));
+        if (ecuacionKraft(vec,setpar)<=1)
+            console.log("es instantaneo: ",isinstantaneo(setpar));
+    }
 }
-function iscompacto(suma,vec,setpar){
-    let r=vec.length;
-    let ans=true
-    setpar.forEach((valor, clave) => {
-        let val=Math.round(logaritmoBaseN(suma/valor,r));
-        if (clave.length!=val)
-            ans=false;
-    }); 
-    return ans;
+function lectura_arch(setpar,vec,sum){
+    const fs = require('fs');
+    if (process.argv[2]!=undefined && fs.existsSync(process.argv[2])){
+        var contenido=fs.readFileSync(process.argv[2],'ASCII');
+        var palabras=contenido.split(' ');
+    
+        for (let i=0;i<palabras.length;i++){
+            if (setpar.has(palabras[i])){
+                const aux=setpar.get(palabras[i])+1;
+                setpar.set(palabras[i],aux);
+            }else
+                setpar.set(palabras[i],1); 
+        }    
+    
+        setpar.forEach((valor, clave) => {
+            for (let i = 0; i < clave.length; i++) {
+                letra = clave[i];
+                if (!vec.includes(letra))
+                    vec.push(letra);
+            }
+        }); 
+        return true;
+    }else
+        return false;
+}
+function sumar(setpar){
+    let suma=0;
+    setpar.forEach((valor, clave) => {suma+=valor;});
+    return suma;
 }
 function enthropy(suma,vec,setpar){
     let sum=0;
@@ -77,6 +75,16 @@ function ecuacionKraft(vec,setpar){
     }); 
     return sum;
 }
+function iscompacto(suma,vec,setpar){
+    let r=vec.length;
+    for (const [clave, valor] of setpar) { 
+        let val=Math.round(logaritmoBaseN(suma/valor,r));
+        if (clave.length!=val){
+            return false;
+        }
+    }; 
+    return true;
+}
 function isinstantaneo(setpar){
     let aux=new Array;
     let i=0;
@@ -98,3 +106,4 @@ function isinstantaneo(setpar){
     }
     return !cond;
 }
+
