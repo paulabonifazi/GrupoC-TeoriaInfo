@@ -28,6 +28,7 @@ function entropia(diccionario, total_simbolos) {
     diccionario.forEach((key, value) => {
         let probabilidad = value / total_simbolos;
         acumulador += probabilidad * Math.log10(probabilidad);  //sera necesario calcular de base N?? VEEEEEEEEEEEEEER!!!
+        /** cambiar base, a que sea base N, cantidad simbolos de la base */
     });
 
     return acumulador;
@@ -40,6 +41,7 @@ function longitudMedia() {
 /** PROGRAMA PRINCIPAL */
 
 let diccionario = new Map;                                      // key: palabra         value:  cant apariciones
+let letras = [];                                                //letras del diccionario
 
 if (leeArchivo(diccionario)) {
     let total_simbolos = diccionario.values.reduce(function (resultado, elemento) {
