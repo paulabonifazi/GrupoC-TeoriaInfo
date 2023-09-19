@@ -2,9 +2,8 @@ const fs = require("fs");
 
 /** FUNCIONES */
 
-function lee_archivo(diccionario)
-{
-    let aux = 1;
+function leeArchivo(diccionario) {
+    let aux = true;
     let archivo = process.argv[2];
     if (archivo != undefined && fs.existsSync(archivo)){
         let contenido = fs.readFileSync(archivo, 'ASCII');      //leo todo el archivo
@@ -14,17 +13,40 @@ function lee_archivo(diccionario)
             if(diccionario.key.has(palabra))
                 diccionario.value++;
             else{
-                
+                diccionario.set(palabra, 1);                    //agrego nueva palabra
             }
-        });
-    
-        
+        });  
     } else
-        aux = 0;
-
+        aux = false;
     return aux;
 };
 
+
+function entropia(diccionario, total_simbolos) {
+    let acumulador = 0;
+
+    diccionario.forEach((key, value) => {
+        let probabilidad = value / total_simbolos;
+        acumulador += probabilidad * Math.log10(probabilidad);  //sera necesario calcular de base N?? VEEEEEEEEEEEEEER!!!
+    });
+
+    return acumulador;
+}
+
+function longitudMedia() {
+    
+}
+
 /** PROGRAMA PRINCIPAL */
 
-let diccionario = new Map; /** key: palabra         value:  cant apariciones*/
+let diccionario = new Map;                                      // key: palabra         value:  cant apariciones
+
+if (leeArchivo(diccionario)) {
+    let total_simbolos = diccionario.values.reduce(function (resultado, elemento) {
+    return resultado + elemento;
+    } , 0);                                                     //acumulo la aparicion de todas las palabras para obtener el total
+
+    console.log("Entropia: ", entropia(diccionario, total_simbolos));
+
+
+}
