@@ -49,9 +49,26 @@ function isnula(matbin){
 }
 function entropianula(matbin){
     var sum=matbin[0][0]*Math.log2(1/matbin[0][0])+matbin[1][0]*Math.log2(1/matbin[1][0]);
-    if (process.argv[3]!=undefined)
+    if (process.argv[3]!=undefined){
+        muestracombinacion(matbin);
         sum*=process.argv[3];
+    }
     return sum;
+}
+function muestracombinacion(matbin){
+    for (let i=0;i<2**process.argv[3];i++)
+        combinacion(matbin,i);
+}
+function combinacion(matbin,num){
+    const vec=[process.argv[3]];
+    let sum=1;
+    for (let j=0;j<process.argv[3];j++){
+        vec[j]=Math.trunc(num%2);
+        sum*=matbin[vec[j]][vec[j]];
+        num/=2;
+    }
+    console.log(vec.join(''),"probabilidad:",sum);
+    
 }
 function entropiaNOnula(matbin){
     let x=[0,0];
@@ -65,11 +82,7 @@ function entropiaNOnula(matbin){
     x[1]=1-x[0];
     console.log("vector estacionario:",x);
     var sum=0;
-    for (let i=0;i<2;i++){
-        for (let j=0;j<2;j++){
-            if (matbin[j][i]!=0)
-                sum=matbin[j][i]*Math.log2(1/matbin[j][i])*x[i];
-        }
-    }
+    sum+=matbin[1][0]*Math.log2(1/matbin[1][0])*x[0]+matbin[0][0]*Math.log2(1/matbin[0][0])*x[0];
+    sum+=matbin[1][1]*Math.log2(1/matbin[1][1])*x[1]+matbin[0][1]*Math.log2(1/matbin[0][1])*x[1];
     return sum;
 }
