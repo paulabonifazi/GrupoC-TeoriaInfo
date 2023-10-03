@@ -5,13 +5,15 @@ function main(){
     let vec=[];
     if (lectura_arch(setpar,vec)){//lo que hago es guardar el diccionario y la cantidad de apariciones
         var suma=sumar(setpar);
+        muestra(setpar,vec,suma);
         console.log('entropia:',enthropy(suma,vec,setpar));
         console.log('longitud media:',longitudMedia(suma,setpar));
         console.log('valor de kraft:',ecuacionKraft(vec,setpar));
         console.log("es compacto: ",iscompacto(suma,vec,setpar));
         if (ecuacionKraft(vec,setpar)<=1)
             console.log("es instantaneo: ",isinstantaneo(setpar));
-    }
+    }else
+        console.log("error al abrir el archivo");
 }
 function lectura_arch(setpar,vec,sum){
     const fs = require('fs');
@@ -26,7 +28,6 @@ function lectura_arch(setpar,vec,sum){
             }else
                 setpar.set(palabras[i],1); 
         }    
-    
         setpar.forEach((valor, clave) => {
             for (let i = 0; i < clave.length; i++) {
                 letra = clave[i];
@@ -37,6 +38,14 @@ function lectura_arch(setpar,vec,sum){
         return true;
     }else
         return false;
+}
+function muestra(setpar,vec,sum){
+    
+    setpar.forEach((valor, clave) => {
+        let aux=valor/sum;
+        console.log('codigo:',clave,'probabilidad:',aux);
+    });
+    console.log("diccionario: ",vec);
 }
 function sumar(setpar){
     let suma=0;
@@ -79,9 +88,8 @@ function iscompacto(suma,vec,setpar){
     let r=vec.length;
     for (const [clave, valor] of setpar) { 
         let val=Math.round(logaritmoBaseN(suma/valor,r));
-        if (clave.length!=val){
+        if (clave.length>val)
             return false;
-        }
     }; 
     return true;
 }
@@ -106,4 +114,3 @@ function isinstantaneo(setpar){
     }
     return !cond;
 }
-
