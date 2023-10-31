@@ -1,7 +1,37 @@
+const fs = require("fs");
 
 /**FUNCIONES */
+function leeArchivo(simbolos) {
+    let aux = true;
+    let archivo = process.argv[2];
+    if (archivo != undefined && fs.existsSync(archivo)){
+        let contenido = fs.readFileSync(archivo, 'ASCII');      //leo todo el archivo
+        let palabras = contenido.split(' ');                    //me quedo con las palabras
+
+        
+
+        palabras.forEach(palabra =>{
+            for (var i of palabra)
+                if (!simbolos.key.has(i))
+                    simbolos.set(i, 1);                        //agrego símbolo nuevo
+                else
+                    simbolos.value++;                          //cuento símblo nuevo
+        });
+
+        for (var i of simbolos.values()){
+            i = i/(simbolos.size);                            //calculo la probabilidad de cada símbolo
+        }
+    }  
+
+    fs.closeSync(archivo);
+}
+
+
+
 
 /**PROGRAMA PRINCIPAL */
+let simbolos = map;                    //simbolos emitidos por la fuente
+
 
 
 
