@@ -37,13 +37,22 @@ function ordenaSimbolos(simbolos){
     
 }
 
+function generaArbol(simbolos) {
+
+}
 
 
 /**PROGRAMA PRINCIPAL */
 let simbolos = map;                                                         //simbolos emitidos por la fuente
 
-if (leeArchivo(simbolos)){
+/**
+ * ver como generar el árbol
+ * 
+ * puntero izq, dato, puntero derecho???
+ */
 
+if (leeArchivo(simbolos)){
+    ordenaSimbolos(simbolos);
 }
 
 
