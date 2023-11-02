@@ -51,7 +51,7 @@ function creaArbol(arbol, nodos, n){
             let nodoAux = newNodo(nodos[n].prob + arbol.prob, nodos[n].clave + arbol.clave);
             console.log(nodoAux.clave, nodoAux.prob);
             
-            nodoAux.izquierdo = nodos.pop();                                  //el nodo con menor prob pasa a ser el hijo izq
+            nodoAux.izquierdo = nodos.pop();                                //el nodo con menor prob pasa a ser el hijo izq
             nodoAux.derecho = arbol;                                        //el hijo der es la cabecera del arbol
             nodoAux = arbol;                                                //el nuevo nodo pasa a ser el arbol
         } 
