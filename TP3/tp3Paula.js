@@ -17,8 +17,8 @@ function leeArchivo(simbolos) {
                     simbolos.value++;                                       //cuento símblo nuevo
         });
 
-        for (var i of simbolos.values()){
-            i = i/(simbolos.size);                                          //calculo la probabilidad de cada símbolo
+        for (var [i, j] of simbolos){
+            simbolos.set(i, (j/simbolos.size).toFixed(4));                  //calculo la prob de cada símbolo
         }
     }  
 
