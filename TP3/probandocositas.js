@@ -5,9 +5,15 @@
 
 let miMap = new Map();
 
-miMap.set("clave1", 3);
-miMap.set("clave2", 10);
-miMap.set("clave3", 20);
+miMap.set("A", 0.15);
+miMap.set("B", 0.3);
+miMap.set("C", 0.2);
+miMap.set("D", 0.05);
+miMap.set("E", 0.15);
+miMap.set("F", 0.05);
+miMap.set("G", 0.1);
+
+
 
 let arrayDePares = Array.from(miMap);
 
@@ -17,14 +23,6 @@ arrayDePares.sort(function(a, b) {
 
 
 let simbolos = new Map(arrayDePares);
-
-
-for (let [i, j] of simbolos) {
-    simbolos.set(i, (j/simbolos.size).toFixed(4));                                      //calculo la prob de cada símbolo
-}
-
-
-
 
 
 
@@ -45,24 +43,29 @@ for (let [i, j] of simbolos) {
 
 function creaArbol(arbol, nodos, n){
     if (n > 0) {
-        console.log(nodos[n].prob)
         if (nodos[n].prob >= arbol.prob) {
-            console.log("ifff");
-            let nodoAux = newNodo(nodos[n].prob + arbol.prob, nodos[n].clave + arbol.clave);
-            console.log(nodoAux.clave, nodoAux.prob);
-            
+            let nodoAux = new Nodo(parseFloat(nodos[n].prob) + parseFloat(arbol.prob), nodos[n].clave + arbol.clave);
+
             nodoAux.izquierdo = nodos.pop();                                //el nodo con menor prob pasa a ser el hijo izq
             nodoAux.derecho = arbol;                                        //el hijo der es la cabecera del arbol
-            nodoAux = arbol;                                                //el nuevo nodo pasa a ser el arbol
+            arbol = nodoAux;                                                //el nuevo nodo pasa a ser el arbol
+        
         } 
         else {                                                              //tengo que buscar las dos claves con menor prob y crear un nuevo nodo
-            console.log("elseeee");
             let nodoAux1 = nodos.pop();
             let nodoAux2 = nodos.pop();
-            let nodoNuevo = newNodo(nodoAux1.prob + nodoAux2.prob, nodoAux1.clave + nodoAux2.clave);   
+            let nodoNuevo = new Nodo(parseFloat(nodoAux1.prob) + parseFloat(nodoAux2.prob), nodoAux1.clave + nodoAux2.clave);   
             nodos.push(nodoNuevo);
+            nodos.sort((a,b) => b - a);                                      //vuelvo a ordenar el vector decrecientemente
         }
-        creaArbol(arbol, nodos, n-1);
+        
+        console.log("raiz arbol: ", arbol.clave);
+        console.log("cantidad elementos array ", n);
+        nodos.forEach(element => {
+            console.log(element);
+        });
+
+        return creaArbol(arbol, nodos, n-1);
     }
 }
 
@@ -87,4 +90,4 @@ console.log(nodos.length)
 
 creaArbol(arbol, nodos, nodos.length-1);
 
-//console.log(arbol.clave);
+console.log(arbol.clave);

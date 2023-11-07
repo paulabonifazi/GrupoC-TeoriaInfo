@@ -8,7 +8,6 @@ function leeArchivo(simbolos) {
         let palabras = contenido.split(' ');                                //me quedo con las palabras
 
         
-
         palabras.forEach(palabra =>{
             for (var i of palabra)
                 if (!simbolos.key.has(i))
@@ -16,17 +15,21 @@ function leeArchivo(simbolos) {
                 else
                     simbolos.value++;                                       //cuento símblo nuevo
         });
-
-        for (var [i, j] of simbolos){
-            simbolos.set(i, (j/simbolos.size).toFixed(4));                  //calculo la prob de cada símbolo
-        }
     }  
 
     fs.closeSync(archivo);
 }
 
+function suma(simbolos) {
+    let aux = 0;
+    simbolos.forEach((valor, clave) => {aux += valor;
+    });
 
-function ordenaSimbolos(simbolos){
+    return aux;
+}
+
+
+function ordenaSimbolos(simbolos) {
     var arrayAux = Array.from(simbolos);
 
     arrayAux.sort(function(a, b) {
@@ -43,7 +46,8 @@ function generaArbol(simbolos) {
 
 
 /**PROGRAMA PRINCIPAL */
-let simbolos = map;                                                         //simbolos emitidos por la fuente
+let simbolos = new Map;                                                         //simbolos emitidos por la fuente
+let N;
 
 /**
  * ver como generar el árbol
@@ -52,6 +56,13 @@ let simbolos = map;                                                         //si
  */
 
 if (leeArchivo(simbolos)){
+
+    N = suma(simbolos);
+    for (var [i, j] of simbolos){
+        simbolos.set(i, (j/N).toFixed(4));                                  //calculo la prob de cada símbolo
+    }
+
+
     ordenaSimbolos(simbolos);
 }
 
