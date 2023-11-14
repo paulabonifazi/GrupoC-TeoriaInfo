@@ -20,6 +20,12 @@ function leeArchivo(simbolos) {
     fs.closeSync(archivo);
 }
 
+/* si process.argv[3] == c -> comprimo (hay que crear el archivo comprimido luego de crear el árbol de huffman)
+   si process.argv[3] == d -> descomprimo (en base al árbol de huffman hay que crear el archivo descomprimido)
+
+   dentro de leeArchivo() debería de analizar si comprimir o descomprimir?? VER EN DONDE HACERLO PARA QUE QUEDE LINDO!
+ */
+
 function suma(simbolos) {
     let aux = 0;
     simbolos.forEach((valor, clave) => {aux += valor;
