@@ -42,7 +42,9 @@ for (let [i, j] of simbolos) {
 
 
 function creaArbol(arbol, nodos, n){
-    if (n > 0) {
+    if (n == 0)
+        return arbol
+    else {
         if (nodos[n].prob >= arbol.prob) {
             let nodoAux = new Nodo(parseFloat(nodos[n].prob) + parseFloat(arbol.prob), nodos[n].clave + arbol.clave);
 
@@ -59,11 +61,11 @@ function creaArbol(arbol, nodos, n){
             nodos.sort((a,b) => b - a);                                      //vuelvo a ordenar el vector decrecientemente
         }
         
-        console.log("raiz arbol: ", arbol.clave);
-        console.log("cantidad elementos array ", n);
-        nodos.forEach(element => {
-            console.log(element);
-        });
+        //console.log("raiz arbol: ", arbol.clave);
+        //console.log("cantidad elementos array ", n);
+        //nodos.forEach(element => {
+            //console.log(element);
+        //});
 
         return creaArbol(arbol, nodos, n-1);
     }
@@ -85,9 +87,10 @@ for (let i of nodos) {
 let arbol = nodos.pop();                                                      //le asigno al arbol el último elemento del vec
 
 console.log(nodos.length)
-//console.log(arbol.clave);
+console.log(arbol.clave);
 
 
-creaArbol(arbol, nodos, nodos.length-1);
+arbol = creaArbol(arbol, nodos, nodos.length-1);
 
 console.log(arbol.clave);
+console.log(nodos);
