@@ -23,7 +23,7 @@ function generarTablaCodigosHuffman(arbol, codigo = '', tabla = {}) {
     return tabla;
 }
 
-function lectura_arch(setpar,suma){
+function lectura_arch(setpar){
     const fs = require('fs');
     if (process.argv[2]!=undefined && fs.existsSync(process.argv[2])){
         var contenido=fs.readFileSync(process.argv[2],'ASCII');
@@ -38,7 +38,6 @@ function lectura_arch(setpar,suma){
                 }else{
                     setpar.set(palabra[j],1); 
                 }
-                suma++;
             }
         }
         return true;
@@ -119,11 +118,7 @@ function Comprimir(mapa,setpar){
     
     const datosBinarios = Buffer.from(vec);
     const rutaArchivo = "Compressed.bin";
-    fs.writeFile(rutaArchivo, datosBinarios, 'binary', (err) => {
-        if (err) throw err;
-        console.log('Datos binarios escritos en el archivo correctamente.');
-        fs.closeSync(fs.openSync(rutaArchivo, 'r'));
-    });
+    fs.writeFileSync(rutaArchivo, datosBinarios, 'binary');
 }
 
 function Descomprimir(dir,dir2){
@@ -173,29 +168,45 @@ function Descomprimir(dir,dir2){
     fs.writeFileSync(dir2, vec.join(''));
 }
 
-function Tdescompresion(){
-   
+function Tdescompresion(dir1,dir2){
+    //dir1 es la direccion del arch original
+    //dir2 es el comprimido
+    const s1 = fs.statSync(dir1);
+    const s2 = fs.statSync(dir2);
+    return s1.size/s2.size;
 }
 
-function rendimiento(){
+function rendimiento(setpar,tabla){
+    const mapl=new Map;
+    let suma=0;
+    const vec=[];
+    let longitudM=0;
+    let i=0;
+    let entropia=0;
 
-}
-
-function longitudMedia(suma,setpar){
-    let sum=0;
+    Object.entries(tabla).forEach(function([key, value]) {
+        mapl.set(key,value.length);
+    });
     setpar.forEach((valor, clave) => {
-        sum+=(valor/suma)*clave.length;
-    }); 
-    return sum;
+        suma+=valor;
+        vec.push(valor);
+    });
+    setpar.forEach((valor, clave) => {
+        entropia+=(valor/suma)*Math.log2(suma/valor);
+        longitudM+=mapl.get(clave)*(valor/suma);
+    });
+    return entropia/longitudM;
 }
 
 function main(){
+    let arbol;
+    let tabla;
         if (process.argv[4]=='-c'){
-            lectura_arch(setpar,suma);
+            lectura_arch(setpar);
             setpar=filtrar_codigo(setpar);
-            const arbol=construirArbolHuffman(setpar);
+            arbol=construirArbolHuffman(setpar);
             const raiz=construirArbolHuffman(setpar);
-            const tabla=generarTablaCodigosHuffman(arbol);
+            tabla=generarTablaCodigosHuffman(arbol);
             const mapafinal=new Map;
             Object.entries(tabla).forEach(function([key, value]) {
                 mapafinal.set(key,value);
@@ -205,10 +216,10 @@ function main(){
         }else if (process.argv[4]=='-d'){
             Descomprimir(process.argv[3],"Decompressed.txt");
             console.log("Descomprimio correctamente");
+            arbol=construirArbolHuffman(setpar);
+            tabla=generarTablaCodigosHuffman(arbol);
         }   
-        if (process.argv[4]=='-c' || process.argv[4]=='-d'){
-            console.log("tasa de descomprecion:",Tdescompresion());
-            console.log("rendimiento:",rendimiento());
-            console.log("redundancia:",1-rendimiento());
-        }
+        console.log("tasa de descomprecion:",Tdescompresion(process.argv[2],process.argv[3]));
+        console.log("rendimiento:",rendimiento(setpar,tabla));
+        console.log("redundancia:",1-rendimiento(setpar,tabla));
 }
