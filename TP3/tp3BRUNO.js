@@ -23,7 +23,7 @@ function generarTablaCodigosHuffman(arbol, codigo = '', tabla = {}) {
     return tabla;
 }
 
-function lectura_arch(setpar){
+function lectura_arch(){
     const fs = require('fs');
     if (process.argv[2]!=undefined && fs.existsSync(process.argv[2])){
         var contenido=fs.readFileSync(process.argv[2],'ASCII');
@@ -45,7 +45,7 @@ function lectura_arch(setpar){
         return false;
 }
 
-function filtrar_codigo(setpar){
+function filtrar_codigo(){
     const arrayOrdenado = Array.from(setpar.entries());
     arrayOrdenado.sort(function(a, b) {
         return a[1] - b[1];
@@ -53,9 +53,9 @@ function filtrar_codigo(setpar){
     return new Map(arrayOrdenado);
 }
 
-function construirArbolHuffman(datos) {
+function construirArbolHuffman() {
     const colaPrioridad = [];
-    datos.forEach((valor, clave) => {
+    setpar.forEach((valor, clave) => {
         const nodo = new Nodo(clave, valor);
         colaPrioridad.push(nodo);
     }); 
@@ -83,7 +83,7 @@ function intTobin(dato){
     return valor;
 }
 
-function Comprimir(mapa,setpar){
+function Comprimir(mapa){
     const vec=[];
     let bn=0;
     let byte=0b00000000;
@@ -176,7 +176,7 @@ function Tdescompresion(dir1,dir2){
     return s1.size/s2.size;
 }
 
-function rendimiento(setpar,tabla){
+function rendimiento(tabla){
     const mapl=new Map;
     let suma=0;
     const vec=[];
@@ -201,25 +201,25 @@ function rendimiento(setpar,tabla){
 function main(){
     let arbol;
     let tabla;
-        if (process.argv[4]=='-c'){
-            lectura_arch(setpar);
-            setpar=filtrar_codigo(setpar);
-            arbol=construirArbolHuffman(setpar);
-            const raiz=construirArbolHuffman(setpar);
-            tabla=generarTablaCodigosHuffman(arbol);
-            const mapafinal=new Map;
-            Object.entries(tabla).forEach(function([key, value]) {
-                mapafinal.set(key,value);
-            });
-            Comprimir(mapafinal,setpar);
-            console.log("Comprimio correctamente");
-        }else if (process.argv[4]=='-d'){
-            Descomprimir(process.argv[3],"Decompressed.txt");
-            console.log("Descomprimio correctamente");
-            arbol=construirArbolHuffman(setpar);
-            tabla=generarTablaCodigosHuffman(arbol);
-        }   
-        console.log("tasa de descomprecion:",Tdescompresion(process.argv[2],process.argv[3]));
-        console.log("rendimiento:",rendimiento(setpar,tabla));
-        console.log("redundancia:",1-rendimiento(setpar,tabla));
+    if (process.argv[4]=='-c'){
+        lectura_arch();
+        setpar=filtrar_codigo();
+        arbol=construirArbolHuffman();
+        const raiz=construirArbolHuffman();
+        tabla=generarTablaCodigosHuffman(arbol);
+        const mapafinal=new Map;
+        Object.entries(tabla).forEach(function([key, value]) {
+            mapafinal.set(key,value);
+        });
+        Comprimir(mapafinal);
+        console.log("Comprimio correctamente");
+    }else if (process.argv[4]=='-d'){
+        Descomprimir(process.argv[3],"Decompressed.txt");
+        console.log("Descomprimio correctamente");
+        arbol=construirArbolHuffman();
+        tabla=generarTablaCodigosHuffman(arbol);
+    }
+    console.log("tasa de descomprecion:",Tdescompresion(process.argv[2],process.argv[3]));
+    console.log("rendimiento:",rendimiento(tabla));
+    console.log("redundancia:",1-rendimiento(tabla));
 }
