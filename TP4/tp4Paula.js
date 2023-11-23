@@ -151,9 +151,9 @@ function crearMatrizMsj(msj){
     let mat;
     msj.forEach(letra => {
         let bin=letra.charCodeAt(0).toString(2);
-        for(fila=0;fila++;fila<7){
-            for(columna=0;columna++;columna<M){
-                mat[fila][columna]=bin[columna];
+        for(columna=0;columna++;columna<M){
+            for(fila=0;fila++;fila<7){
+                mat[fila][columna]=bin[fila];
             }
         }
     });
