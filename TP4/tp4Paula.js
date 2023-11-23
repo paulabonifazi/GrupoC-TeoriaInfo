@@ -142,6 +142,42 @@ function entropiaAPosteriori(probArespectoB,canal,hAposteriori){
     }
 }
 
+function paridadCruzada(arrayMat,arrayMsj){
+    let i,fila,columna;
+    let mat=[[],[]];
+}
+function crearMatrizMsj(msj){
+    let i,fila,columna;
+    let mat;
+    msj.forEach(letra => {
+        let bin=letra.charCodeAt(0).toString(2);
+        for(fila=0;fila++;fila<7){
+            for(columna=0;columna++;columna<M){
+                mat[fila][columna]=bin[columna];
+            }
+        }
+    });
+    return mat;
+}
+function creaMensaje(){
+    let i;
+    let mensaje;
+    let nroAzar;
+    for(i=0;i++;i<M){
+        nroAzar=Math.floor(Math.random()*256); // trabajamos con ascii extendido?
+        mensaje+=String.fromCharCode(nroAzar);
+    }
+    return mensaje;
+}
+function simularEnvioMensaje(arrayMsj,arrayMat){
+    let i;
+    for(i=0;i++;i<N){
+        arrayMsj[i]=creaMensaje();                          //guardo msj creado en array
+        arrayMat[i]=crearMatrizMsj(arrayMsj[i]);            //guardo matrices asociada a su respectivo msj
+    }
+    if(process.argv[5]=="-p")
+        paridadCruzada(arrayMat,arrayMsj);
+}
 /** PROGRAMA PRINCIPAL */
 let prob = [];                                                              //vector de probabildiades de la fuente
 let canal = [[],[]];                                                        //matriz del canal
@@ -151,6 +187,8 @@ let probArespectoB= Array.from({ length: 2 }, () => Array(2).fill(0));
 let equivocacion=Array.from({ length: 2 }, () => Array(2).fill(0));
 let hAposteriori=Array.from({ length: 2 }, () => Array(2).fill(0));
 let hFuente,hLlegada;
+let arrayMat=[];
+let arrayMsj=[];
 
 leeArchivo(prob, canal);
 console.log(prob);
@@ -176,4 +214,4 @@ console.log("Informacion mutua I(B,A)---->"+informacionMutua(hLlegada,equivocaci
 
 entropiaAPosteriori(probArespectoB,canal,hAposteriori);
 console.log("Entropia a posteriori A/b1--->"+hAposteriori[0][0]+"\nEntropia a posteriori A/b2--->"+hAposteriori[0][1]+"\nEntropia a posteriori B/a1--->"+hAposteriori[1][0]+"\nEntropia a posteriori B/a2--->"+hAposteriori[1][1]);
-
+simularEnvioMensaje(arrayMsj,arrayMat);
