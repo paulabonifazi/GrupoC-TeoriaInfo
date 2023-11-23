@@ -115,7 +115,6 @@ function Comprimir(mapa){
         }
     }
     //aca arriba lo q hace es tomar caracater a carater del txt original, pasarlo a bits y subirlo como cadena de bytes al archivo comprimido despues de la cabecera
-    
     const datosBinarios = Buffer.from(vec);
     const rutaArchivo = "Compressed.bin";
     fs.writeFileSync(rutaArchivo, datosBinarios, 'binary');
@@ -137,7 +136,7 @@ function Descomprimir(dir,dir2){
     //primero reconstruimos las claves con su frecuencia
     let arbol=construirArbolHuffman(mapa);
     const raiz=construirArbolHuffman(mapa);
-    //armamos el arbol nueavamente
+    //armamos el arbol nuevamente
 
     let i=data[0]*3+1;
     let byte=data[i];
@@ -202,12 +201,12 @@ function main(){
     let arbol;
     let tabla;
     if (process.argv[4]=='-c'){
-        lectura_arch();
-        setpar=filtrar_codigo();
-        arbol=construirArbolHuffman();
-        const raiz=construirArbolHuffman();
-        tabla=generarTablaCodigosHuffman(arbol);
-        const mapafinal=new Map;
+        lectura_arch();//de aca sale datosTXT(todo el txt) y setpar(clave y prob)
+        setpar=filtrar_codigo();//ordenamos setpar
+        arbol=construirArbolHuffman();//en base a setpar creamos el arbol
+        const raiz=construirArbolHuffman();//copia del arbol para la compresion
+        tabla=generarTablaCodigosHuffman(arbol);//tabla tiene clave y codigo asociado
+        const mapafinal=new Map;//basicamente paso la tabla a la estructura de mapa
         Object.entries(tabla).forEach(function([key, value]) {
             mapafinal.set(key,value);
         });
@@ -216,8 +215,8 @@ function main(){
     }else if (process.argv[4]=='-d'){
         Descomprimir(process.argv[3],"Decompressed.txt");
         console.log("Descomprimio correctamente");
-        arbol=construirArbolHuffman();
-        tabla=generarTablaCodigosHuffman(arbol);
+        arbol=construirArbolHuffman();//los vuelvo a calcular para los calculos de abajo
+        tabla=generarTablaCodigosHuffman(arbol);//idem
     }
     console.log("tasa de descomprecion:",Tdescompresion(process.argv[2],process.argv[3]));
     console.log("rendimiento:",rendimiento(tabla));
