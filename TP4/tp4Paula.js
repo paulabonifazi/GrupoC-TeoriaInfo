@@ -142,20 +142,15 @@ function entropiaAPosteriori(probArespectoB,canal,hAposteriori){
     }
 }
 function xorBinario(vec){
-    let aux=[];
-    while (vec.length!=1){
-        for (let k=0;k<vec.length;k+=2){
-            if (k+1==vec.length){
-                aux.push(vec[k]);
-            }else{
-                aux.push(vec[k]^vec[k+1]);
-            }
-        }
-        vec=aux;
-        aux=[];
+    let resp=0;
+    for (let k=0;k<vec.length;k++){
+        if (vec[k]==1)
+        resp++; 
     }
-    return vec[0];
-    
+    if (resp%2==0)
+            return 0;
+        else
+            return 1;
 }
 function copiacolumna(j,matriz){
     const aux=[];
@@ -164,35 +159,44 @@ function copiacolumna(j,matriz){
     }
     return aux;
 }
-function paridadCruzada(matrizMNJ,matrizRC,PmatrizMNJ,PmatrizRC){
+function paridadCruzada(matrizMNJ,PmatrizMNJ){
     for (let i=0;i<=N;i++){
         for (let j=0;j<=M;j++){
             if (i==N && j==M){
                 let vec1=PmatrizMNJ[i];
                 vec1.pop();
                 let vec2=copiacolumna(j,PmatrizMNJ);
-                let num=xorBinario(vec1)^xorBinario(vec2);
-                PmatrizMNJ[i][j]=num;
-                vec1=PmatrizRC[i];
-                vec1.pop();
-                vec2=copiacolumna(j,PmatrizRC);
-                num=xorBinario(vec1)^xorBinario(vec2);
-                PmatrizRC[i][j]=num;
+                PmatrizMNJ[i][j]=xorBinario(vec1)^xorBinario(vec2);
             }else{
                 if (i==N){
                     PmatrizMNJ[i][j]=xorBinario(copiacolumna(j,matrizMNJ));
-                    PmatrizRC[i][j]=xorBinario(copiacolumna(j,matrizRC));
                 }else{
                     if (j==M){
                         PmatrizMNJ[i][j]=xorBinario(matrizMNJ[i]);
-                        PmatrizRC[i][j]=xorBinario(matrizRC[i]);
                     }else{
                         PmatrizMNJ[i][j]=matrizMNJ[i][j];
-                        PmatrizRC[i][j]=matrizRC[i][j];
                     }
                 }
             }
         }
+    }
+}
+function recepcionParidad(PmatrizMNJ,matrizRC,PmatrizRC,canal){
+    for (let i=0;i<=N;i++){
+        for (let j=0;j<=M;j++){
+            if (i==N || j==M){
+                const NA=Math.random();
+                const num=PmatrizMNJ[i][j];
+                if (NA>canal[num][0])
+                    PmatrizRC[i][j]=1;
+                else
+                    PmatrizRC[i][j]=0;
+            }else{
+                PmatrizRC[i][j]=matrizRC[i][j];
+            }
+        }
+
+
     }
 }
 function creaRecepcion(canal,matrizMNJ,matrizRC){
@@ -224,14 +228,24 @@ function simularEnvioMensaje(prob,canal,matrizMNJ,matrizRC){
     console.log("Mensajes enviados:",matrizMNJ);
     creaRecepcion(canal,matrizMNJ,matrizRC);
     console.log("Mensajes recibidos:",matrizRC);
-    const n1=parseInt(N)+1;
-    const m1=parseInt(M)+1;
-    const PmatrizMNJ = Array.from({ length: n1 }, () => Array(m1).fill(0));
-    const PmatrizRC = Array.from({ length: n1 }, () => Array(m1).fill(0));
     if (process.argv[5]=="-p"){
-        paridadCruzada(matrizMNJ,matrizRC,PmatrizMNJ,PmatrizRC);
-        console.log("matriz paridad ORIGINAL:",PmatrizMNJ,"matriz paridad RECIBIDA:",PmatrizRC);
+        const n1=parseInt(N)+1;
+        const m1=parseInt(M)+1;
+        const PmatrizMNJ = Array.from({ length: n1 }, () => Array(m1).fill(0));
+        const PmatrizRC = Array.from({ length: n1 }, () => Array(m1).fill(0));
+        paridadCruzada(matrizMNJ,PmatrizMNJ);
+        recepcionParidad(PmatrizMNJ,matrizRC,PmatrizRC,canal);
+        console.log("matriz paridad RECIBIDA:",PmatrizRC);
     }
+    let iguales=0;
+    for (let i=0;i<N;i++){
+        const s1=matrizMNJ.join('');
+        const s2=matrizRC.join('');
+        if (s1==s2)
+            iguales++;
+    }
+    console.log("cantidad de mensajes iguales:",iguales);
+    console.log("cantidad de mensajes diferentes:",parseInt(N)-iguales);
 }
 
 
