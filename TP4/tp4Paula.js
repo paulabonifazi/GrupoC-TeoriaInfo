@@ -141,10 +141,59 @@ function entropiaAPosteriori(probArespectoB,canal,hAposteriori){
         hAposteriori[1][1]+=canal[1][1]*Math.log2(1/canal[1][1]);
     }
 }
-
-function paridadCruzada(arrayMat,arrayMsj){
-    let i,fila,columna;
-    let mat=[[],[]];
+function xorBinario(vec){
+    let aux=[];
+    while (vec.length!=1){
+        for (let k=0;k<vec.length;k+=2){
+            if (k+1==vec.length){
+                aux.push(vec[k]);
+            }else{
+                aux.push(vec[k]^vec[k+1]);
+            }
+        }
+        vec=aux;
+        aux=[];
+    }
+    return vec[0];
+    
+}
+function copiacolumna(j,matriz){
+    const aux=[];
+    for (let i=0;i<N;i++){
+        aux.push(matriz[i][j]);
+    }
+    return aux;
+}
+function paridadCruzada(matrizMNJ,matrizRC,PmatrizMNJ,PmatrizRC){
+    for (let i=0;i<=N;i++){
+        for (let j=0;j<=M;j++){
+            if (i==N && j==M){
+                let vec1=PmatrizMNJ[i];
+                vec1.pop();
+                let vec2=copiacolumna(j,PmatrizMNJ);
+                let num=xorBinario(vec1)^xorBinario(vec2);
+                PmatrizMNJ[i][j]=num;
+                vec1=PmatrizRC[i];
+                vec1.pop();
+                vec2=copiacolumna(j,PmatrizRC);
+                num=xorBinario(vec1)^xorBinario(vec2);
+                PmatrizRC[i][j]=num;
+            }else{
+                if (i==N){
+                    PmatrizMNJ[i][j]=xorBinario(copiacolumna(j,matrizMNJ));
+                    PmatrizRC[i][j]=xorBinario(copiacolumna(j,matrizRC));
+                }else{
+                    if (j==M){
+                        PmatrizMNJ[i][j]=xorBinario(matrizMNJ[i]);
+                        PmatrizRC[i][j]=xorBinario(matrizRC[i]);
+                    }else{
+                        PmatrizMNJ[i][j]=matrizMNJ[i][j];
+                        PmatrizRC[i][j]=matrizRC[i][j];
+                    }
+                }
+            }
+        }
+    }
 }
 function creaRecepcion(canal,matrizMNJ,matrizRC){
     for (let i=0;i<N;i++){
@@ -175,6 +224,14 @@ function simularEnvioMensaje(prob,canal,matrizMNJ,matrizRC){
     console.log("Mensajes enviados:",matrizMNJ);
     creaRecepcion(canal,matrizMNJ,matrizRC);
     console.log("Mensajes recibidos:",matrizRC);
+    const n1=parseInt(N)+1;
+    const m1=parseInt(M)+1;
+    const PmatrizMNJ = Array.from({ length: n1 }, () => Array(m1).fill(0));
+    const PmatrizRC = Array.from({ length: n1 }, () => Array(m1).fill(0));
+    if (process.argv[5]=="-p"){
+        paridadCruzada(matrizMNJ,matrizRC,PmatrizMNJ,PmatrizRC);
+        console.log("matriz paridad ORIGINAL:",PmatrizMNJ,"matriz paridad RECIBIDA:",PmatrizRC);
+    }
 }
 
 
