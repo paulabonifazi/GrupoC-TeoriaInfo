@@ -23,7 +23,7 @@ function generarTablaCodigosHuffman(arbol, codigo = '', tabla = {}) {
     return tabla;
 }
 
-function lectura_arch(setpar,suma){
+function lectura_arch(){
     const fs = require('fs');
     if (process.argv[2]!=undefined && fs.existsSync(process.argv[2])){
         var contenido=fs.readFileSync(process.argv[2],'ASCII');
@@ -38,7 +38,6 @@ function lectura_arch(setpar,suma){
                 }else{
                     setpar.set(palabra[j],1); 
                 }
-                suma++;
             }
         }
         return true;
@@ -46,7 +45,7 @@ function lectura_arch(setpar,suma){
         return false;
 }
 
-function filtrar_codigo(setpar){
+function filtrar_codigo(){
     const arrayOrdenado = Array.from(setpar.entries());
     arrayOrdenado.sort(function(a, b) {
         return a[1] - b[1];
@@ -54,9 +53,9 @@ function filtrar_codigo(setpar){
     return new Map(arrayOrdenado);
 }
 
-function construirArbolHuffman(datos) {
+function construirArbolHuffman() {
     const colaPrioridad = [];
-    datos.forEach((valor, clave) => {
+    setpar.forEach((valor, clave) => {
         const nodo = new Nodo(clave, valor);
         colaPrioridad.push(nodo);
     }); 
@@ -84,7 +83,7 @@ function intTobin(dato){
     return valor;
 }
 
-function Comprimir(mapa,setpar){
+function Comprimir(mapa){
     const vec=[];
     let bn=0;
     let byte=0b00000000;
@@ -116,14 +115,9 @@ function Comprimir(mapa,setpar){
         }
     }
     //aca arriba lo q hace es tomar caracater a carater del txt original, pasarlo a bits y subirlo como cadena de bytes al archivo comprimido despues de la cabecera
-    
     const datosBinarios = Buffer.from(vec);
     const rutaArchivo = "Compressed.bin";
-    fs.writeFile(rutaArchivo, datosBinarios, 'binary', (err) => {
-        if (err) throw err;
-        console.log('Datos binarios escritos en el archivo correctamente.');
-        fs.closeSync(fs.openSync(rutaArchivo, 'r'));
-    });
+    fs.writeFileSync(rutaArchivo, datosBinarios, 'binary');
 }
 
 function Descomprimir(dir,dir2){
@@ -142,7 +136,7 @@ function Descomprimir(dir,dir2){
     //primero reconstruimos las claves con su frecuencia
     let arbol=construirArbolHuffman(mapa);
     const raiz=construirArbolHuffman(mapa);
-    //armamos el arbol nueavamente
+    //armamos el arbol nuevamente
 
     let i=data[0]*3+1;
     let byte=data[i];
@@ -173,42 +167,58 @@ function Descomprimir(dir,dir2){
     fs.writeFileSync(dir2, vec.join(''));
 }
 
-function Tdescompresion(){
-   
+function Tdescompresion(dir1,dir2){
+    //dir1 es la direccion del arch original
+    //dir2 es el comprimido
+    const s1 = fs.statSync(dir1);
+    const s2 = fs.statSync(dir2);
+    return s1.size/s2.size;
 }
 
-function rendimiento(){
+function rendimiento(tabla){
+    const mapl=new Map;
+    let suma=0;
+    const vec=[];
+    let longitudM=0;
+    let i=0;
+    let entropia=0;
 
-}
-
-function longitudMedia(suma,setpar){
-    let sum=0;
+    Object.entries(tabla).forEach(function([key, value]) {
+        mapl.set(key,value.length);
+    });
     setpar.forEach((valor, clave) => {
-        sum+=(valor/suma)*clave.length;
-    }); 
-    return sum;
+        suma+=valor;
+        vec.push(valor);
+    });
+    setpar.forEach((valor, clave) => {
+        entropia+=(valor/suma)*Math.log2(suma/valor);
+        longitudM+=mapl.get(clave)*(valor/suma);
+    });
+    return entropia/longitudM;
 }
 
 function main(){
-        if (process.argv[4]=='-c'){
-            lectura_arch(setpar,suma);
-            setpar=filtrar_codigo(setpar);
-            const arbol=construirArbolHuffman(setpar);
-            const raiz=construirArbolHuffman(setpar);
-            const tabla=generarTablaCodigosHuffman(arbol);
-            const mapafinal=new Map;
-            Object.entries(tabla).forEach(function([key, value]) {
-                mapafinal.set(key,value);
-            });
-            Comprimir(mapafinal,setpar);
-            console.log("Comprimio correctamente");
-        }else if (process.argv[4]=='-d'){
-            Descomprimir(process.argv[3],"Decompressed.txt");
-            console.log("Descomprimio correctamente");
-        }   
-        if (process.argv[4]=='-c' || process.argv[4]=='-d'){
-            console.log("tasa de descomprecion:",Tdescompresion());
-            console.log("rendimiento:",rendimiento());
-            console.log("redundancia:",1-rendimiento());
-        }
+    let arbol;
+    let tabla;
+    if (process.argv[4]=='-c'){
+        lectura_arch();//de aca sale datosTXT(todo el txt) y setpar(clave y prob)
+        setpar=filtrar_codigo();//ordenamos setpar
+        arbol=construirArbolHuffman();//en base a setpar creamos el arbol
+        const raiz=construirArbolHuffman();//copia del arbol para la compresion
+        tabla=generarTablaCodigosHuffman(arbol);//tabla tiene clave y codigo asociado
+        const mapafinal=new Map;//basicamente paso la tabla a la estructura de mapa
+        Object.entries(tabla).forEach(function([key, value]) {
+            mapafinal.set(key,value);
+        });
+        Comprimir(mapafinal);
+        console.log("Comprimio correctamente");
+    }else if (process.argv[4]=='-d'){
+        Descomprimir(process.argv[3],"Decompressed.txt");
+        console.log("Descomprimio correctamente");
+        arbol=construirArbolHuffman();//los vuelvo a calcular para los calculos de abajo
+        tabla=generarTablaCodigosHuffman(arbol);//idem
+    }
+    console.log("tasa de descomprecion:",Tdescompresion(process.argv[2],process.argv[3]));
+    console.log("rendimiento:",rendimiento(tabla));
+    console.log("redundancia:",1-rendimiento(tabla));
 }
