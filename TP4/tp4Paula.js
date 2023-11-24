@@ -223,6 +223,37 @@ function creaMensaje(prob,matrizMNJ){
         }
     }
 }
+function correccionError(PmatrizRC,matrizRC){
+    if (PmatrizRC[N][M]==0){
+        let errorLRC=0;
+        let fila;
+        for (let i=0;i<N;i++){
+            if (PmatrizRC[i][M]!=xorBinario(matrizRC[i])){
+                errorLRC++;
+                fila=i;
+            }
+        }
+        let errorVRC=0;
+        let columna;
+        for (let j=0;j<M;j++){
+            if (PmatrizRC[N][j]!=xorBinario(copiacolumna(j,matrizRC))){
+                errorVRC++;
+                columna=j;
+            }
+        }
+        if (errorLRC==1 && errorVRC==1){
+            if (matrizRC[fila][columna]==0)
+                matrizRC[fila][columna]=1
+            else
+                matrizRC[fila][columna]=0
+            console.log("se corrigio un error simple");
+        }else{
+            console.log("Errores columnas de paridad",errorVRC);
+            console.log("Errores filas de paridad",errorLRC);
+        }
+    }else
+        console.log("El bit de paridad es erroneo");
+}
 function simularEnvioMensaje(prob,canal,matrizMNJ,matrizRC){
     creaMensaje(prob,matrizMNJ);
     console.log("Mensajes enviados:",matrizMNJ);
@@ -236,6 +267,7 @@ function simularEnvioMensaje(prob,canal,matrizMNJ,matrizRC){
         paridadCruzada(matrizMNJ,PmatrizMNJ);
         recepcionParidad(PmatrizMNJ,matrizRC,PmatrizRC,canal);
         console.log("matriz paridad RECIBIDA:",PmatrizRC);
+        correccionError(PmatrizRC,matrizRC);
         //queda sacar la paridad de la recibida y compararlo con la que trae
     }
     let iguales=0;
