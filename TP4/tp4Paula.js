@@ -236,6 +236,7 @@ function simularEnvioMensaje(prob,canal,matrizMNJ,matrizRC){
         paridadCruzada(matrizMNJ,PmatrizMNJ);
         recepcionParidad(PmatrizMNJ,matrizRC,PmatrizRC,canal);
         console.log("matriz paridad RECIBIDA:",PmatrizRC);
+        //queda sacar la paridad de la recibida y compararlo con la que trae
     }
     let iguales=0;
     for (let i=0;i<N;i++){
