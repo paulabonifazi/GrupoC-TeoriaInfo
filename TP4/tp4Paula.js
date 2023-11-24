@@ -293,32 +293,32 @@ let hAposteriori=Array.from({ length: 2 }, () => Array(2).fill(0));
 let hFuente,hLlegada;
 
 leeArchivo(prob, canal);
-console.log(prob);
-console.log(canal);
+console.log("Probabilidades de la fuente:",parseFloat(prob));
+console.log("Matriz probabilidades del canal:",canal);
 
 calculoProbDeUnCanal(probB,prob,canal);
-console.log(probB);
+console.log("Probabilidades de salida:",probB);
 
 calculoProbConociendoLlegada(probB,prob,canal,probArespectoB);
-console.log(probArespectoB);
+console.log("P(A/B)",probArespectoB);
 
 calculoProbSucesosSimultaneos(prob,canal,probSuceso);
-console.log(probSuceso);
+console.log("P(a,b):",probSuceso);
 
 Equivocacion(probSuceso,probArespectoB,canal,equivocacion);
 console.log("Equivocacion de A con respecto a B "+equivocacion[0]+"\nEquivocacion de B con respecto a A "+equivocacion[1]);
 
 hFuente=entropiaAPriori(prob);
 hLlegada=entropiaAPriori(probB);
-console.log("Entropia a Priori de A---->"+hFuente);
-console.log("Entropia a Priori de B---->"+hLlegada);
+console.log("Entropia a Priori de A:"+hFuente);
+console.log("Entropia a Priori de B:"+hLlegada);
 
 //Las informaciones deberias ser iguales
-console.log("Informacion mutua I(A,B)---->"+informacionMutua(hFuente,equivocacion[0]));
-console.log("Informacion mutua I(B,A)---->"+informacionMutua(hLlegada,equivocacion[1]));
+console.log("Informacion mutua I(A,B):"+informacionMutua(hFuente,equivocacion[0]));
+console.log("Informacion mutua I(B,A):"+informacionMutua(hLlegada,equivocacion[1]));
 
 entropiaAPosteriori(probArespectoB,canal,hAposteriori);
-console.log("Entropia a posteriori A/b1--->"+hAposteriori[0][0]+"\nEntropia a posteriori A/b2--->"+hAposteriori[0][1]+"\nEntropia a posteriori B/a1--->"+hAposteriori[1][0]+"\nEntropia a posteriori B/a2--->"+hAposteriori[1][1]);
+console.log("Entropia a posteriori A/b1:"+hAposteriori[0][0]+"\nEntropia a posteriori A/b2--->"+hAposteriori[0][1]+"\nEntropia a posteriori B/a1--->"+hAposteriori[1][0]+"\nEntropia a posteriori B/a2--->"+hAposteriori[1][1]);
 
 const matrizMNJ = Array.from({ length: N }, () => Array(M).fill(0));
 const matrizRC = Array.from({ length: N }, () => Array(M).fill(0));
