@@ -239,8 +239,8 @@ function simularEnvioMensaje(prob,canal,matrizMNJ,matrizRC){
     }
     let iguales=0;
     for (let i=0;i<N;i++){
-        const s1=matrizMNJ.join('');
-        const s2=matrizRC.join('');
+        const s1=matrizMNJ[i].join('');
+        const s2=matrizRC[i].join('');
         if (s1==s2)
             iguales++;
     }
