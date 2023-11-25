@@ -293,7 +293,10 @@ let hAposteriori=Array.from({ length: 2 }, () => Array(2).fill(0));
 let hFuente,hLlegada;
 
 leeArchivo(prob, canal);
-console.log("Probabilidades de la fuente:",parseFloat(prob));
+console.log("Probabilidades de la fuente:");
+prob.forEach(i =>{
+    console.log(parseFloat(i));
+});
 console.log("Matriz probabilidades del canal:",canal);
 
 calculoProbDeUnCanal(probB,prob,canal);
