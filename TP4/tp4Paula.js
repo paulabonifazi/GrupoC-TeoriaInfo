@@ -260,17 +260,17 @@ let hAposteriori=Array.from({ length: 2 }, () => Array(2).fill(0));
 let hFuente,hLlegada;
 
 leeArchivo(prob, canal);
-console.log(prob);
-console.log(canal);
+console.log("probabilidad de la fuente: ", prob);
+console.log("matriz del canal ", canal);
 
 calculoProbDeUnCanal(probB,prob,canal);
-console.log(probB);
+console.log("probabilidad del canal: ", probB);
 
 calculoProbConociendoLlegada(probB,prob,canal,probArespectoB);
-console.log(probArespectoB);
+console.log("probabildiad de A respecto de B: ", probArespectoB);
 
 calculoProbSucesosSimultaneos(prob,canal,probSuceso);
-console.log(probSuceso);
+console.log("probabilidad del suceso simultaneo:", probSuceso);
 
 Equivocacion(probSuceso,probArespectoB,canal,equivocacion);
 console.log("Equivocacion de A con respecto a B "+equivocacion[0]+"\nEquivocacion de B con respecto a A "+equivocacion[1]);

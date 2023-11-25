@@ -218,7 +218,7 @@ function main(){
         arbol=construirArbolHuffman();//los vuelvo a calcular para los calculos de abajo
         tabla=generarTablaCodigosHuffman(arbol);//idem
     }
-    console.log("tasa de descomprecion:",Tdescompresion(process.argv[2],process.argv[3]));
+    console.log("tasa de descompresion:",Tdescompresion(process.argv[2],process.argv[3]));
     console.log("rendimiento:",rendimiento(tabla));
     console.log("redundancia:",1-rendimiento(tabla));
 }
