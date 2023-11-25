@@ -9,37 +9,30 @@ function leeArchivo(prob, canal) {
     let archivo = process.argv[2];
     N = process.argv[3];
     M = process.argv[4];
-
-    try {
-        let palabras = []
-        let contenido = fs.readFileSync(archivo, 'ASCII');                  //leo todo el archivo
-        let lineas = contenido.split('\n');                                 //me quedo con las palabras
-        lineas.forEach(element => {
-            element = element.replace('\r', '')
-            palabras = palabras.concat(element.split(' '))
-        });
-
-        for (let k=0; k<palabras.length; k++) {
-            switch (k) {
-                case 0: prob[0] = parseFloat(palabras[k]);
-                    break;
-                case 1: prob[1] = parseFloat(palabras[k]);
-                    break;
-                case 2: canal[0][0] = parseFloat(palabras[k]);
-                    break;
-                case 3: canal[0][1] = parseFloat(palabras[k]);
-                    break;
-                case 4: canal[1][0] = parseFloat(palabras[k]);
-                    break;
-                case 5: canal[1][1] = parseFloat(palabras[k]);
-                    break;            
+    let contenido = fs.readFileSync(archivo, 'ASCII');
+    let palabras = contenido.split('');
+    const numeros=[];
+    let num="";
+    for (let i=0;i<palabras.length;i++){
+        if (palabras[i]!='\n' && palabras[i]!='\r' && palabras[i]!=' ')
+            num+=palabras[i];
+        else{
+            if (palabras[i]=='\r' || palabras[i]==' '){
+                numeros.push(num);
+                num="";
             }
         }
-      
     }
-    catch (error){
-        console.error("Error al leer el archivo", error);
+    numeros.push(num);
+    for (let i=0;i<numeros.length;i++){
+        numeros[i]=parseFloat(numeros[i]);
     }
+    prob[0]=numeros[0];
+    prob[1]=numeros[1];
+    canal[0][0]=numeros[2];
+    canal[0][1]=numeros[3];
+    canal[1][0]=numeros[4];
+    canal[1][1]=numeros[5];  
 }
 //ecuacion 2
 function calculoProbDeUnCanal(probB,prob,canal){
@@ -293,20 +286,20 @@ let hAposteriori=Array.from({ length: 2 }, () => Array(2).fill(0));
 let hFuente,hLlegada;
 
 leeArchivo(prob, canal);
-console.log("Probabilidades de la fuente:",parseFloat(prob));
+console.log("Probabilidades de la fuente:",prob);
 console.log("Matriz probabilidades del canal:",canal);
 
 calculoProbDeUnCanal(probB,prob,canal);
 console.log("Probabilidades de salida:",probB);
 
 calculoProbConociendoLlegada(probB,prob,canal,probArespectoB);
-console.log("P(A/B)",probArespectoB);
+console.log("P(ai/B)",probArespectoB);
 
 calculoProbSucesosSimultaneos(prob,canal,probSuceso);
-console.log("P(a,b):",probSuceso);
+console.log("P(ai,bj):",probSuceso);
 
 Equivocacion(probSuceso,probArespectoB,canal,equivocacion);
-console.log("Equivocacion de A con respecto a B "+equivocacion[0]+"\nEquivocacion de B con respecto a A "+equivocacion[1]);
+console.log("H(A/B)"+equivocacion[0]+"\nH(B/A)"+equivocacion[1]);
 
 hFuente=entropiaAPriori(prob);
 hLlegada=entropiaAPriori(probB);
@@ -314,8 +307,8 @@ console.log("Entropia a Priori de A:"+hFuente);
 console.log("Entropia a Priori de B:"+hLlegada);
 
 //Las informaciones deberias ser iguales
-console.log("Informacion mutua I(A,B):"+informacionMutua(hFuente,equivocacion[0]));
-console.log("Informacion mutua I(B,A):"+informacionMutua(hLlegada,equivocacion[1]));
+console.log("Informacion mutua I(A,B):"+informacionMutua(parseFloat(hFuente),parseFloat(equivocacion[0])));
+console.log("Informacion mutua I(B,A):"+informacionMutua(parseFloat(hLlegada),parseFloat(equivocacion[1])));
 
 entropiaAPosteriori(probArespectoB,canal,hAposteriori);
 console.log("Entropia a posteriori A/b1:"+hAposteriori[0][0]+"\nEntropia a posteriori A/b2--->"+hAposteriori[0][1]+"\nEntropia a posteriori B/a1--->"+hAposteriori[1][0]+"\nEntropia a posteriori B/a2--->"+hAposteriori[1][1]);
