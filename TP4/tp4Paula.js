@@ -223,6 +223,37 @@ function creaMensaje(prob,matrizMNJ){
         }
     }
 }
+function correccionError(PmatrizRC,matrizRC){
+    if (PmatrizRC[N][M]==0){
+        let errorLRC=0;
+        let fila;
+        for (let i=0;i<N;i++){
+            if (PmatrizRC[i][M]!=xorBinario(matrizRC[i])){
+                errorLRC++;
+                fila=i;
+            }
+        }
+        let errorVRC=0;
+        let columna;
+        for (let j=0;j<M;j++){
+            if (PmatrizRC[N][j]!=xorBinario(copiacolumna(j,matrizRC))){
+                errorVRC++;
+                columna=j;
+            }
+        }
+        if (errorLRC==1 && errorVRC==1){
+            if (matrizRC[fila][columna]==0)
+                matrizRC[fila][columna]=1
+            else
+                matrizRC[fila][columna]=0
+            console.log("se corrigio un error simple");
+        }else{
+            console.log("Errores columnas de paridad",errorVRC);
+            console.log("Errores filas de paridad",errorLRC);
+        }
+    }else
+        console.log("El bit de paridad es erroneo");
+}
 function simularEnvioMensaje(prob,canal,matrizMNJ,matrizRC){
     creaMensaje(prob,matrizMNJ);
     console.log("Mensajes enviados:",matrizMNJ);
@@ -236,11 +267,13 @@ function simularEnvioMensaje(prob,canal,matrizMNJ,matrizRC){
         paridadCruzada(matrizMNJ,PmatrizMNJ);
         recepcionParidad(PmatrizMNJ,matrizRC,PmatrizRC,canal);
         console.log("matriz paridad RECIBIDA:",PmatrizRC);
+        correccionError(PmatrizRC,matrizRC);
+        //queda sacar la paridad de la recibida y compararlo con la que trae
     }
     let iguales=0;
     for (let i=0;i<N;i++){
-        const s1=matrizMNJ.join('');
-        const s2=matrizRC.join('');
+        const s1=matrizMNJ[i].join('');
+        const s2=matrizRC[i].join('');
         if (s1==s2)
             iguales++;
     }
@@ -260,32 +293,32 @@ let hAposteriori=Array.from({ length: 2 }, () => Array(2).fill(0));
 let hFuente,hLlegada;
 
 leeArchivo(prob, canal);
-console.log("probabilidad de la fuente: ", prob);
-console.log("matriz del canal ", canal);
+console.log("Probabilidades de la fuente:",parseFloat(prob));
+console.log("Matriz probabilidades del canal:",canal);
 
 calculoProbDeUnCanal(probB,prob,canal);
-console.log("probabilidad del canal: ", probB);
+console.log("Probabilidades de salida:",probB);
 
 calculoProbConociendoLlegada(probB,prob,canal,probArespectoB);
-console.log("probabildiad de A respecto de B: ", probArespectoB);
+console.log("P(A/B)",probArespectoB);
 
 calculoProbSucesosSimultaneos(prob,canal,probSuceso);
-console.log("probabilidad del suceso simultaneo:", probSuceso);
+console.log("P(a,b):",probSuceso);
 
 Equivocacion(probSuceso,probArespectoB,canal,equivocacion);
 console.log("Equivocacion de A con respecto a B "+equivocacion[0]+"\nEquivocacion de B con respecto a A "+equivocacion[1]);
 
 hFuente=entropiaAPriori(prob);
 hLlegada=entropiaAPriori(probB);
-console.log("Entropia a Priori de A---->"+hFuente);
-console.log("Entropia a Priori de B---->"+hLlegada);
+console.log("Entropia a Priori de A:"+hFuente);
+console.log("Entropia a Priori de B:"+hLlegada);
 
 //Las informaciones deberias ser iguales
-console.log("Informacion mutua I(A,B)---->"+informacionMutua(hFuente,equivocacion[0]));
-console.log("Informacion mutua I(B,A)---->"+informacionMutua(hLlegada,equivocacion[1]));
+console.log("Informacion mutua I(A,B):"+informacionMutua(hFuente,equivocacion[0]));
+console.log("Informacion mutua I(B,A):"+informacionMutua(hLlegada,equivocacion[1]));
 
 entropiaAPosteriori(probArespectoB,canal,hAposteriori);
-console.log("Entropia a posteriori A/b1--->"+hAposteriori[0][0]+"\nEntropia a posteriori A/b2--->"+hAposteriori[0][1]+"\nEntropia a posteriori B/a1--->"+hAposteriori[1][0]+"\nEntropia a posteriori B/a2--->"+hAposteriori[1][1]);
+console.log("Entropia a posteriori A/b1:"+hAposteriori[0][0]+"\nEntropia a posteriori A/b2--->"+hAposteriori[0][1]+"\nEntropia a posteriori B/a1--->"+hAposteriori[1][0]+"\nEntropia a posteriori B/a2--->"+hAposteriori[1][1]);
 
 const matrizMNJ = Array.from({ length: N }, () => Array(M).fill(0));
 const matrizRC = Array.from({ length: N }, () => Array(M).fill(0));
