@@ -74,15 +74,6 @@ function construirArbolHuffman() {
     return colaPrioridad[0];
 }
 
-function intTobin(dato){
-    const array=Array.from(String(dato),Number);
-    let valor=0;
-    for (let i=0;i<array.length;i++){
-        valor+=array[i]*2**(array.length-1-i);
-    }
-    return valor;
-}
-
 function Comprimir(mapa){
     const vec=[];
     let bn=0;
@@ -114,6 +105,10 @@ function Comprimir(mapa){
             }
         }
     }
+    for (bn;bn<8;bn++){
+        byte=byte<<1;
+    }
+    vec.push(byte);
     //aca arriba lo q hace es tomar caracater a carater del txt original, pasarlo a bits y subirlo como cadena de bytes al archivo comprimido despues de la cabecera
     const datosBinarios = Buffer.from(vec);
     const rutaArchivo = "Compressed.bin";
@@ -204,7 +199,6 @@ function main(){
         lectura_arch();//de aca sale datosTXT(todo el txt) y setpar(clave y prob)
         setpar=filtrar_codigo();//ordenamos setpar
         arbol=construirArbolHuffman();//en base a setpar creamos el arbol
-        const raiz=construirArbolHuffman();//copia del arbol para la compresion
         tabla=generarTablaCodigosHuffman(arbol);//tabla tiene clave y codigo asociado
         const mapafinal=new Map;//basicamente paso la tabla a la estructura de mapa
         Object.entries(tabla).forEach(function([key, value]) {
@@ -218,7 +212,7 @@ function main(){
         arbol=construirArbolHuffman();//los vuelvo a calcular para los calculos de abajo
         tabla=generarTablaCodigosHuffman(arbol);//idem
     }
-    console.log("tasa de descomprecion:",Tdescompresion(process.argv[2],process.argv[3]));
+    console.log("tasa de descompresion:",Tdescompresion(process.argv[2],process.argv[3]));
     console.log("rendimiento:",rendimiento(tabla));
     console.log("redundancia:",1-rendimiento(tabla));
 }
