@@ -203,8 +203,8 @@ function creaRecepcion(canal,matrizMNJ,matrizRC){
                 matrizRC[i][j]=0;
         }
     }
-
 }
+
 function creaMensaje(prob,matrizMNJ){
     for (let i=0;i<N;i++){
         for (let j=0;j<M;j++){
@@ -215,9 +215,20 @@ function creaMensaje(prob,matrizMNJ){
                 matrizMNJ[i][j]=0;
         }
     }
+
+}
+function bitRelevante(matricRC){
+    const vec=[];
+    for (let i=0;i<N;i++){
+        vec.push(xorBinario(matricRC[i]));
+    }
+    for (let j=0;j<M;j++){
+        vec.push(xorBinario(copiacolumna(j,matrizRC)));
+    }
+    return xorBinario(vec);
 }
 function correccionError(PmatrizRC,matrizRC){
-    if (PmatrizRC[N][M]==0){
+    if (bitRelevante(matrizRC)==0){
         let errorLRC=0;
         let fila;
         for (let i=0;i<N;i++){
@@ -239,7 +250,7 @@ function correccionError(PmatrizRC,matrizRC){
                 matrizRC[fila][columna]=1
             else
                 matrizRC[fila][columna]=0
-            console.log("se corrigio un error simple");
+            console.log(`se corrigio un error simple en [${fila}][${columna}] `);
         }else{
             console.log("Errores columnas de paridad",errorVRC);
             console.log("Errores filas de paridad",errorLRC);
@@ -273,7 +284,6 @@ function simularEnvioMensaje(prob,canal,matrizMNJ,matrizRC){
     console.log("cantidad de mensajes iguales:",iguales);
     console.log("cantidad de mensajes diferentes:",parseInt(N)-iguales);
 }
-
 
 /* PROGRAMA PRINCIPAL */
 let prob = [];                                                              //vector de probabildiades de la fuente
